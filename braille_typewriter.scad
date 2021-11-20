@@ -45,7 +45,7 @@ module negativePlate() {
 CLAW_T = DOT_SIZE;
 CLAW_ID = 60;
 CUT_DEPTH = 5;
-BUTTON_D = 15;
+BUTTON_D = 12;
 
 GRID_T = 0.5;
 GRID_H = 35;
@@ -61,7 +61,7 @@ module claw(ID=CLAW_ID) {
         difference() {
             union() {
                 tx(BID/2-DOT_SIZE) circle(d=BID);
-                tx(5) difference() {
+                tx(5+(15-BUTTON_D)/2) difference() {
                     square([BUTTON_D, ID/2+10]);
                     translate([BUTTON_D/2-CLAW_T/2,ID/2+10-CUT_DEPTH]) square([CLAW_T, CUT_DEPTH]);
                 }
@@ -93,7 +93,7 @@ module button() {
 
 module showClaw() {
     claw();
-    tx(5+DOT_SIZE/2+BUTTON_D/2) ty(CLAW_T+CLAW_ID/2+10) rx(90) button();
+    tx(5+DOT_SIZE/2+BUTTON_D/2+(15-BUTTON_D)/2) ty(CLAW_T+CLAW_ID/2+10) rx(90) button();
 }
 
 module clawSet() {
@@ -183,12 +183,14 @@ module grid() {
             }
             difference() {
                 tz(GRID_H/F) cylinder(d=$FOREVER, h=$FOREVER);
-                cylinder(d1=GRID_H*2,d2=0,h=GRID_H);
+                cylinder(d1=GRID_H*2,d2=10,h=GRID_H);
             }
             clawSet();
         }
         cylinder(d=S,h=$FOREVER,$fn=6);
     }
+    NT_W = 11*1.5;
+    cmirror([1,0,0]) rz(-60) tx(-S/2) rz(30) ty(-NT_W/2) nailTab();
 }
 
 //negativePlate();
