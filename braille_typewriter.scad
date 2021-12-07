@@ -55,6 +55,9 @@ GRID_SHELL_T = GRID_T*2*2;
 GRID_S = 125+DOT_SPACING+10;
 GRID_F = 3;
 
+// nailTab width - really oughtta be a misc function
+NT_W = 11*1.5;
+
 module claw(ID=CLAW_ID) {
     tz(DOT_SIZE/2) rx(-90)
     translate([DOT_SIZE,DOT_SIZE,0]/2) rx(90)
@@ -191,7 +194,6 @@ module grid() {
         }
         cylinder(d=S,h=$FOREVER,$fn=6);
     }
-    NT_W = 11*1.5;
     cmirror([1,0,0]) rz(-60) tx(-S/2) rz(30) ty(-NT_W/2) nailTab();
 }
 
@@ -201,7 +203,7 @@ GAP_D = STICK_W+1;
 WALL_D = 5;
 BAND_T = 3;
 STICK_L = 42;
-STICK_L_TWEAK = 5; // Hack; added to stick length, because things didn't quite add up
+STICK_L_TWEAK = 0; // Hack; added to stick length, because things didn't quite add up
 STICK_WALL_T = 1;
 Y0 = 35;
 Y0G = Y0+BAND_T+PEG_D/2;
@@ -215,39 +217,38 @@ module stepper_block() {
     B_SY = WALL_D*2 + GAP_D;
     STRETCH_F = 3;
     
-    STEP_SX = X0-(PEG_D*3)/2-PEG_D/2;
+    STEP_SX = X1+PEG_D-(PEG_D*3)/2-PEG_D/2+10;
     FOOT_SX = PEG_D*3 + STEP_SX;
     FOOT_H = 5;
     
-    difference() {
-        union() {
-            difference() {
-                union() {
-                    //ty(-B_SY/2) undercut([5,B_SY,PEG_D*2]);
-                    ty(-B_SY/2) cube([PEG_D*3,B_SY,Y0G]);
-                    translate([(PEG_D*3)/2,B_SY/2,Y0G]) rx(90) hull() linear_extrude(height=B_SY) {
-                        channel([0,0],[0,(Y0-Y1)*(STRETCH_F-1)],d1=PEG_D*3,d2=PEG_D,cap="circle");
-                    }
-                    tx(-STEP_SX) ty(-B_SY/2) undercut([STEP_SX,B_SY,PEG_D*2]);
+    union() {
+        difference() {
+            union() {
+                //ty(-B_SY/2) undercut([5,B_SY,PEG_D*2]);
+                ty(-B_SY/2) cube([PEG_D*3,B_SY,Y0G]);
+                translate([(PEG_D*3)/2,B_SY/2,Y0G]) rx(90) hull() linear_extrude(height=B_SY) {
+                    channel([0,0],[0,(Y0-Y1)*(STRETCH_F-1)],d1=PEG_D*3,d2=PEG_D,cap="circle");
                 }
-                cube([$FOREVER, GAP_D, $FOREVER], center=true);
-                translate([(PEG_D*3)/2 - (PEG_D+1)/2,-$FOREVER/2,Y1G]) cube([PEG_D+1,$FOREVER,Y0-Y1]);
-                translate([(PEG_D*3)/2,0,Y1G]) rx(90) cylinder(d=PEG_D+1,h=$FOREVER,center=true);
-                translate([(PEG_D*3)/2,0,Y0G]) teardrop(d=PEG_D+1,h=$FOREVER);
             }
-            translate([(PEG_D*3)/2, 0, Y0G+(Y0-Y1)*(STRETCH_F-1)]) rx(90) cylinder(d=PEG_D,h=B_SY,center=true);
-            
-            // X0 stand-in
-            //translate([(PEG_D*3)/2-X0,0,(PEG_D+1)/2]) rx(90) cylinder(d=PEG_D,h=10,center=true);
-            
-            tx(-STEP_SX) ty(-B_SY/2) undercut([FOOT_H,B_SY,0]);
-            tx(FOOT_H-STEP_SX) ty(-B_SY/2) cube([FOOT_SX-FOOT_H,B_SY,FOOT_H]);
+            cube([$FOREVER, GAP_D, $FOREVER], center=true);
+            translate([(PEG_D*3)/2 - (PEG_D+1)/2,-$FOREVER/2,Y1G]) cube([PEG_D+1,$FOREVER,Y0-Y1]);
+            translate([(PEG_D*3)/2,0,Y1G]) rx(90) cylinder(d=PEG_D+1,h=$FOREVER,center=true);
+            translate([(PEG_D*3)/2,0,Y0G]) teardrop(d=PEG_D+1,h=$FOREVER);
+            tz(-PEG_D-3) tx((PEG_D*3)/2) tz(Y1G) ry(45) ty($FOREVER/2-GAP_D/2) OZm();
         }
-        // Grid shell cutout
-        tx((PEG_D*3)/2) scale([1.1,1.1,1.1]) tx(GRID_S/2) union() {
-            grid();
-            clawSet();
-        };
+        translate([(PEG_D*3)/2, 0, Y0G+(Y0-Y1)*(STRETCH_F-1)]) rx(90) cylinder(d=PEG_D,h=B_SY,center=true);
+        
+        //TODO Ought to be z-placed to match cut corner...
+        translate([PEG_D*2, -B_SY/2, FOOT_H-1]) skew([0,0,0,0,0,45]) cube([PEG_D,B_SY,13]);
+        
+        // X0 stand-in
+        //translate([(PEG_D*3)/2-X0,0,(PEG_D+1)/2]) rx(90) cylinder(d=PEG_D,h=10,center=true);
+        
+        tx(PEG_D*3+FOOT_H) rz(180) ty(-B_SY/2) undercut([FOOT_H,B_SY,0]);
+        tx(FOOT_H-STEP_SX) ty(-B_SY/2) cube([FOOT_SX-FOOT_H,B_SY,FOOT_H]);
+        tx(-STEP_SX) ty(-B_SY/2) undercut([FOOT_H,B_SY,0]);
+        
+        cmirror([1,0,0]) tx(NT_W/2) ty(-B_SY/2) rz(90) nailTab();
     }
 }
 
