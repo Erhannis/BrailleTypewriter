@@ -1,5 +1,20 @@
 /**
+Mediocre braille typewriter.  3D printed.  OpenSCAD.
+
 Run get_deps.sh to clone dependencies into a linked folder in your home directory.
+Not sure I need them all, but it's my default set.
+
+I used a 0.3mm nozzle (because that's what I had attached),
+PLA,
+0.2mm layer	height,
+0 horizontal expansion (contrary to many of my other prints).
+  EXCEPT, I think, for the stepper peg, and possibly stepper block,
+  in which case probably -0.08mm horizontal expansion.
+
+See bottom of file for which objects to print.
+
+Note, I'm not sure I've assembled the latest version of all these
+things, or if there are some untested tweaks.  Sorry.
 */
 
 use <deps.link/BOSL/nema_steppers.scad>
@@ -278,16 +293,16 @@ module stepper_peg() {
 //button(); //x6
 //dot();
 
-//grid();
-//clawSet();
+grid();
+clawSet();
 
-//// Print these
+//// Print these for main system
 //negativePlate();
 //grid();
 //clawSetFlat();
 //button(); //x6
 
-// Print these for stepper module
-stepper_block();
+//// Print these for stepper module
+//stepper_block();
 //stepper_peg();
 //stepper_stick();
