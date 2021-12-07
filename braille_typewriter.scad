@@ -1,6 +1,8 @@
 /**
 Mediocre braille typewriter.  3D printed.  OpenSCAD.
 
+Accompanying video: https://youtu.be/RmpkvETl4JI
+
 Run get_deps.sh to clone dependencies into a linked folder in your home directory.
 Not sure I need them all, but it's my default set.
 
